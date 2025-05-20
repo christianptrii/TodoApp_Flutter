@@ -17,6 +17,12 @@ class _AddScreenState extends State<AddScreen> {
   final Color greenText = const Color(0xFF3F6B3F);
   final Color bgColor = const Color(0xFFF7FFF7);
 
+  List<String> collaborators = [
+    'gekina01@gmail.com',
+    'christianprtii@gmail.com',
+    'indiratrij@gmail.com',
+  ];
+
   @override
   void dispose() {
     titleController.dispose();
@@ -55,18 +61,13 @@ class _AddScreenState extends State<AddScreen> {
   }
 
   void _showCollaboratorDialog(BuildContext context) {
-    List<String> collaborators = [
-      'gekina01@gmail.com (Owner)',
-      'christianprtii@gmail.com',
-      'indiratrij@gmail.com',
-    ];
     TextEditingController emailController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (context, setStateDialog) {
             return AlertDialog(
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
@@ -105,6 +106,7 @@ class _AddScreenState extends State<AddScreen> {
                                     setState(() {
                                       collaborators.remove(email);
                                     });
+                                    setStateDialog(() {});
                                   },
                                 ),
                       );
@@ -148,8 +150,9 @@ class _AddScreenState extends State<AddScreen> {
                     if (emailController.text.isNotEmpty) {
                       setState(() {
                         collaborators.add(emailController.text);
-                        emailController.clear();
                       });
+                      setStateDialog(() {});
+                      emailController.clear();
                     }
                   },
                   child: const Text(
@@ -274,6 +277,33 @@ class _AddScreenState extends State<AddScreen> {
                 ],
               ),
               const SizedBox(height: 30),
+
+              // avatar kolaborator
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children:
+                      collaborators.map((email) {
+                        return Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          child: CircleAvatar(
+                            radius: 20,
+                            backgroundColor: pastelGreen,
+                            child: Text(
+                              email[0].toUpperCase(),
+                              style: TextStyle(
+                                color: greenText,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // TOMBOL
               Row(
                 children: [
                   Expanded(
