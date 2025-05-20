@@ -54,6 +54,117 @@ class _AddScreenState extends State<AddScreen> {
     );
   }
 
+  void _showCollaboratorDialog(BuildContext context) {
+    List<String> collaborators = [
+      'gekina01@gmail.com (Owner)',
+      'christianprtii@gmail.com',
+      'indiratrij@gmail.com',
+    ];
+    TextEditingController emailController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Text(
+                'Collaborators',
+                style: TextStyle(color: greenText, fontWeight: FontWeight.bold),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ...collaborators.map((email) {
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: greenText.withOpacity(0.1),
+                          child: Icon(Icons.person, color: greenText),
+                        ),
+                        title: Text(
+                          email,
+                          style: TextStyle(
+                            color: greenText,
+                            fontWeight:
+                                email.contains('Owner')
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                          ),
+                        ),
+                        trailing:
+                            email.contains('Owner')
+                                ? null
+                                : IconButton(
+                                  icon: Icon(Icons.close, color: greenText),
+                                  onPressed: () {
+                                    setState(() {
+                                      collaborators.remove(email);
+                                    });
+                                  },
+                                ),
+                      );
+                    }).toList(),
+                    const Divider(),
+                    TextField(
+                      controller: emailController,
+                      cursorColor: greenText,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person_add, color: greenText),
+                        hintText: 'Person or email to share with',
+                        hintStyle: TextStyle(color: greenText.withOpacity(0.6)),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: greenText),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: greenText.withOpacity(0.3),
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cancel', style: TextStyle(color: greenText)),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: greenText,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: () {
+                    if (emailController.text.isNotEmpty) {
+                      setState(() {
+                        collaborators.add(emailController.text);
+                        emailController.clear();
+                      });
+                    }
+                  },
+                  child: const Text(
+                    'Save',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -163,7 +274,6 @@ class _AddScreenState extends State<AddScreen> {
                 ],
               ),
               const SizedBox(height: 30),
-
               Row(
                 children: [
                   Expanded(
@@ -201,9 +311,7 @@ class _AddScreenState extends State<AddScreen> {
                         elevation: 2,
                       ),
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Fitur kolaborator')),
-                        );
+                        _showCollaboratorDialog(context);
                       },
                       child: Icon(Icons.person_add, color: greenText),
                     ),
