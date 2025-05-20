@@ -17,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'title': 'Belanja bulanan',
       'isFavorite': false,
       'items': ['Beras 5 kg', 'Sayur', 'Buah', 'Minyak 2 liter'],
+      'collaborators': ['A', 'B'],
     },
     {
       'title': 'Persiapan Acara',
@@ -27,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'Sebar undangan',
         'Bersih-bersih',
       ],
+      'collaborators': ['C'],
     },
   ];
 
@@ -49,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
             )
             .toList();
 
-    // Tampilan Halaman Home
+    // Halaman Home
     final homeContent = LayoutBuilder(
       builder: (context, constraints) {
         return Padding(
@@ -188,6 +190,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children:
+                                    (todo['collaborators'] as List).map<Widget>(
+                                      (initial) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            right: 6,
+                                          ),
+                                          child: CircleAvatar(
+                                            radius: 12,
+                                            backgroundColor: greenText,
+                                            child: Text(
+                                              initial,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ).toList(),
+                              ),
                             ],
                           ),
                         );
@@ -200,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
 
-    // Tampilan Halaman Profile
+    // Halaman Profile
     final profileContent = const Center(
       child: Text('Profile', style: TextStyle(fontSize: 40)),
     );
