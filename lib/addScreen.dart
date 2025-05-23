@@ -23,6 +23,15 @@ class _AddScreenState extends State<AddScreen> {
     'indiratrij@gmail.com',
   ];
 
+  String selectedCategory = 'Pekerjaan';
+  final List<String> categories = [
+    'Pekerjaan',
+    'Makanan',
+    'Studi',
+    'Keuangan',
+    'Kreatif',
+  ];
+
   @override
   void dispose() {
     titleController.dispose();
@@ -330,6 +339,48 @@ class _AddScreenState extends State<AddScreen> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Kategori',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: greenText,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  color: pastelGreen,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: selectedCategory,
+                    icon: const Icon(Icons.arrow_drop_down),
+                    isExpanded: true,
+                    dropdownColor: pastelGreen,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedCategory = newValue!;
+                      });
+                    },
+                    items:
+                        categories.map<DropdownMenuItem<String>>((
+                          String value,
+                        ) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(color: greenText),
+                            ),
+                          );
+                        }).toList(),
+                  ),
+                ),
               ),
               const SizedBox(height: 30),
               SingleChildScrollView(
