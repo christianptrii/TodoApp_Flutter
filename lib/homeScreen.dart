@@ -16,12 +16,14 @@ class _HomeScreenState extends State<HomeScreen> {
     {
       'title': 'Belanja bulanan',
       'isFavorite': false,
+      'category': 'Makanan',
       'items': ['Beras 5 kg', 'Sayur', 'Buah', 'Minyak 2 liter'],
       'collaborators': ['A', 'B'],
     },
     {
       'title': 'Persiapan Acara',
       'isFavorite': true,
+      'category': 'Pekerjaan',
       'items': [
         'Dekor ruangan',
         'Order catering',
@@ -35,23 +37,36 @@ class _HomeScreenState extends State<HomeScreen> {
   String filter = 'Semua';
   String searchQuery = '';
 
+  final List<String> categories = [
+    'Semua',
+    'Favorite',
+    'Pekerjaan',
+    'Makanan',
+    'Studi',
+    'Keuangan',
+    'Kreatif',
+  ];
+
   @override
   Widget build(BuildContext context) {
     final Color pastelGreen = const Color(0xFFCDEAC0);
     final Color greenText = const Color(0xFF3F6B3F);
 
     final filteredTodos =
-        (filter == 'Semua'
-                ? todos
-                : todos.where((todo) => todo['isFavorite'] == true))
-            .where(
-              (todo) => todo['title'].toLowerCase().contains(
-                searchQuery.toLowerCase(),
-              ),
-            )
-            .toList();
+        todos.where((todo) {
+          if (filter == 'Semua') {
+            return todo['title'].toLowerCase().contains(
+              searchQuery.toLowerCase(),
+            );
+          } else if (filter == 'Favorite') {
+            return todo['isFavorite'] == true &&
+                todo['title'].toLowerCase().contains(searchQuery.toLowerCase());
+          } else {
+            return todo['category'] == filter &&
+                todo['title'].toLowerCase().contains(searchQuery.toLowerCase());
+          }
+        }).toList();
 
-    // Halaman Home
     final homeContent = LayoutBuilder(
       builder: (context, constraints) {
         return Padding(
@@ -93,30 +108,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              Row(
-                children: [
-                  FilterChip(
-                    selected: filter == 'Semua',
-                    label: const Text('Semua'),
-                    selectedColor: pastelGreen,
-                    onSelected: (_) {
-                      setState(() {
-                        filter = 'Semua';
-                      });
-                    },
+              SizedBox(
+                height: 40,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children:
+                        categories.map((cat) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: FilterChip(
+                              selected: filter == cat,
+                              label: Text(cat),
+                              selectedColor: pastelGreen,
+                              onSelected: (_) {
+                                setState(() {
+                                  filter = cat;
+                                });
+                              },
+                            ),
+                          );
+                        }).toList(),
                   ),
-                  const SizedBox(width: 8),
-                  FilterChip(
-                    selected: filter == 'Favorite',
-                    label: const Text('Favorite'),
-                    selectedColor: pastelGreen,
-                    onSelected: (_) {
-                      setState(() {
-                        filter = 'Favorite';
-                      });
-                    },
-                  ),
-                ],
+                ),
               ),
               const SizedBox(height: 24),
               Expanded(
@@ -227,7 +241,6 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
 
-    // Halaman Profile
     final profileContent = const Center(
       child: Text('Profile', style: TextStyle(fontSize: 40)),
     );
