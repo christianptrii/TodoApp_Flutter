@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todoapp/addScreen.dart';
 import 'package:todoapp/loginScreen.dart';
+import 'package:todoapp/profileScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -241,9 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
 
-    final profileContent = const Center(
-      child: Text('Profile', style: TextStyle(fontSize: 40)),
-    );
+    final profileContent = const ProfileScreen();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7FFF7),
@@ -264,16 +263,19 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: pastelGreen,
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddScreen()),
-          );
-        },
-        child: const Icon(Icons.add, color: Colors.green),
-      ),
+      floatingActionButton:
+          myIndex == 0
+              ? FloatingActionButton(
+                backgroundColor: pastelGreen,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddScreen()),
+                  );
+                },
+                child: const Icon(Icons.add, color: Colors.green),
+              )
+              : null,
       body: IndexedStack(
         index: myIndex,
         children: [homeContent, profileContent],
