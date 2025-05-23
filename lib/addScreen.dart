@@ -189,6 +189,61 @@ class _AddScreenState extends State<AddScreen> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.white),
+            tooltip: 'Hapus note',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder:
+                    (context) => AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      title: Text(
+                        'Konfirmasi',
+                        style: TextStyle(
+                          color: greenText,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      content: const Text('Yakin ingin menghapus note ini?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            'Batal',
+                            style: TextStyle(color: greenText),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const HomeScreen(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: greenText,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Ya',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
@@ -277,8 +332,6 @@ class _AddScreenState extends State<AddScreen> {
                 ],
               ),
               const SizedBox(height: 30),
-
-              // avatar kolaborator
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -302,8 +355,6 @@ class _AddScreenState extends State<AddScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // TOMBOL
               Row(
                 children: [
                   Expanded(
