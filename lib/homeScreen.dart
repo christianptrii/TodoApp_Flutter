@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:todoapp/addScreen.dart';
-import 'package:todoapp/loginScreen.dart';
 import 'package:todoapp/profileScreen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,34 +11,50 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int myIndex = 0;
+  String selectedCategory = 'Semua';
+  String searchQuery = '';
 
-  List<Map<String, dynamic>> todos = [
+  final Color pastelGreen = const Color(0xFFCDEAC0);
+  final Color greenText = const Color(0xFF3F6B3F);
+
+  final List<Map<String, dynamic>> todos = [
     {
       'title': 'Belanja Bulanan',
       'isFavorite': false,
       'category': 'Makanan',
-      'items': ['Beras 5 kg', 'Sayur kolplay', 'Apel 1 kg', 'Minyak 2 liter', 'Jeruk 1 kg'],
+      'items': [
+        'Beras 5 kg',
+        'Sayur kol',
+        'Apel 1 kg',
+        'Minyak 2 liter',
+        'Jeruk 1 kg',
+      ],
       'collaborators': ['A', 'B'],
     },
     {
       'title': 'Persiapan Acara Kantor',
       'isFavorite': true,
       'category': 'Pekerjaan',
-      'items': ['Dekor ruangan', 'Order catering', 'Sebar undangan', 'Bersih-bersih'],
+      'items': [
+        'Dekor ruangan',
+        'Order catering',
+        'Sebar undangan',
+        'Bersih-bersih',
+      ],
       'collaborators': ['C', 'D'],
     },
     {
       'title': 'Tugas Kuliah',
       'isFavorite': true,
       'category': 'Studi',
-      'items': ['Baca jurnal AI', 'Kerjakan tugas matematika', 'Siapkan presentasi'],
+      'items': ['Baca jurnal AI', 'Tugas matematika', 'Presentasi'],
       'collaborators': ['E'],
     },
     {
       'title': 'Plan Keuangan',
       'isFavorite': false,
       'category': 'Keuangan',
-      'items': ['Bayar tagihan listrik', 'Cek anggaran bulanan', 'Tabung 20% gaji'],
+      'items': ['Bayar listrik', 'Cek anggaran', 'Tabung 20% gaji'],
       'collaborators': ['F'],
     },
     {
@@ -60,101 +75,155 @@ class _HomeScreenState extends State<HomeScreen> {
       'title': 'Libur Akhir Pekan',
       'isFavorite': true,
       'category': 'Pribadi',
-      'items': ['Piknik ke pantai', 'Beli tiket bioskop', 'Makan malam keluarga'],
+      'items': ['Piknik', 'Tiket bioskop', 'Makan malam keluarga'],
       'collaborators': ['J', 'K', 'L'],
     },
   ];
 
-  String filter = 'Semua';
-  String searchQuery = '';
-
-  final List<String> categories = [
-    'Semua',
-    'Favorite',
-    'Pekerjaan',
-    'Makanan',
-    'Studi',
-    'Keuangan',
-    'Kreatif',
-    'Kesehatan',
-    'Pribadi',
+  final List<Map<String, dynamic>> categories = [
+    {'label': 'Semua', 'icon': Icons.grid_view},
+    {'label': 'Favorite', 'icon': Icons.favorite},
+    {'label': 'Pekerjaan', 'icon': Icons.work},
+    {'label': 'Makanan', 'icon': Icons.fastfood},
+    {'label': 'Studi', 'icon': Icons.school},
+    {'label': 'Keuangan', 'icon': Icons.attach_money},
+    {'label': 'Kreatif', 'icon': Icons.brush},
+    {'label': 'Kesehatan', 'icon': Icons.favorite_outline},
+    {'label': 'Pribadi', 'icon': Icons.person},
   ];
 
   @override
   Widget build(BuildContext context) {
-    final Color pastelGreen = const Color(0xFFCDEAC0);
-    final Color greenText = const Color(0xFF3F6B3F);
-
-    final filteredTodos = todos.where((todo) {
-      if (filter == 'Semua') {
-        return todo['title'].toLowerCase().contains(searchQuery.toLowerCase());
-      } else if (filter == 'Favorite') {
-        return todo['isFavorite'] == true &&
-            todo['title'].toLowerCase().contains(searchQuery.toLowerCase());
-      } else {
-        return todo['category'] == filter &&
-            todo['title'].toLowerCase().contains(searchQuery.toLowerCase());
-      }
-    }).toList();
+    final filteredTodos =
+        todos.where((todo) {
+          final titleMatch = todo['title'].toLowerCase().contains(
+            searchQuery.toLowerCase(),
+          );
+          if (selectedCategory == 'Semua') return titleMatch;
+          if (selectedCategory == 'Favorite')
+            return todo['isFavorite'] && titleMatch;
+          return todo['category'] == selectedCategory && titleMatch;
+        }).toList();
 
     final homeContent = LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Hello, Christian!",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: greenText,
+          child: Column(
+            children: [
+              // Header
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                decoration: BoxDecoration(
+                  color: greenText,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
                   ),
                 ),
-                const SizedBox(height: 4),
-                const Text(
-                  "Got something to plan today?",
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 40,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: categories.map((cat) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: FilterChip(
-                            selected: filter == cat,
-                            label: Text(cat),
-                            selectedColor: pastelGreen,
-                            onSelected: (_) {
-                              setState(() {
-                                filter = cat;
-                              });
-                            },
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Hello, Christian!",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        );
-                      }).toList(),
+                          SizedBox(height: 4),
+                          Text(
+                            "Got something to plan today?",
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                    const CircleAvatar(
+                      radius: 22,
+                      backgroundImage: AssetImage('assets/images/profile.jpg'),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                Container(
+              ),
+
+              // Kategori Scroll
+              Container(
+                height: 100,
+                margin: const EdgeInsets.symmetric(vertical: 20),
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: categories.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    final cat = categories[index];
+                    final isSelected = selectedCategory == cat['label'];
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedCategory = cat['label'];
+                        });
+                      },
+                      child: Container(
+                        width: 85,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isSelected ? pastelGreen : Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color:
+                                isSelected ? greenText : Colors.grey.shade300,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              cat['icon'],
+                              color: isSelected ? greenText : Colors.grey,
+                              size: 24,
+                            ),
+                            const SizedBox(height: 6),
+                            Flexible(
+                              child: Text(
+                                cat['label'],
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                      isSelected ? greenText : Colors.black87,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // Search Bar
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
                   decoration: BoxDecoration(
                     color: pastelGreen,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: TextField(
-                    onChanged: (value) {
-                      setState(() {
-                        searchQuery = value;
-                      });
-                    },
+                    onChanged: (value) => setState(() => searchQuery = value),
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Search...',
@@ -162,177 +231,164 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-                GridView.count(
+              ),
+
+              const SizedBox(height: 24),
+
+              // Todo Grid
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: constraints.maxWidth > 600 ? 3 : 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  children: filteredTodos.map((todo) {
-                    return SizedBox(
-                      width: 160, // Lebar tetap untuk setiap kartu
-                      height: 280, // Tinggi diperpanjang untuk memanjang ke bawah
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: pastelGreen,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    todo['title'],
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: greenText,
-                                      fontSize: 16,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1, // Batasi judul 1 baris
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: Icon(
-                                    todo['isFavorite']
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
-                                    color: greenText,
-                                    size: 20,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      todo['isFavorite'] = !todo['isFavorite'];
-                                    });
-                                  },
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Expanded(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: List.generate(
-                                    (todo['items'] as List).length > 5
-                                        ? 5
-                                        : (todo['items'] as List).length, // Batasi maksimal 5 item
-                                    (index) => Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 4),
-                                      child: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.check_box_outline_blank,
-                                            size: 16,
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Expanded(
-                                            child: Text(
-                                              todo['items'][index],
-                                              style: TextStyle(color: greenText),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1, // Batasi item 1 baris
-                                            ),
-                                          ),
-                                        ],
+                  childAspectRatio: 0.85,
+                  children:
+                      filteredTodos.map((todo) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: pastelGreen,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Title + Favorite
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      todo['title'],
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: greenText,
+                                        fontSize: 16,
                                       ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      todo['isFavorite']
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color: greenText,
+                                      size: 20,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        todo['isFavorite'] =
+                                            !todo['isFavorite'];
+                                      });
+                                    },
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+
+                              // Items (max 4)
+                              ...List.generate(
+                                (todo['items'] as List).length > 4
+                                    ? 4
+                                    : (todo['items'] as List).length,
+                                (i) => Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.check_box_outline_blank,
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          todo['items'][i],
+                                          style: TextStyle(color: greenText),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: (todo['collaborators'] as List)
-                                  .take(3) // Batasi maksimal 3 collaborator
-                                  .map<Widget>(
-                                    (initial) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(right: 6),
-                                        child: CircleAvatar(
-                                          radius: 12,
-                                          backgroundColor: greenText,
-                                          child: Text(
-                                            initial,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
+                              const Spacer(),
+
+                              // Collaborators
+                              Row(
+                                children:
+                                    (todo['collaborators'] as List).take(3).map(
+                                      (initial) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            right: 6,
+                                          ),
+                                          child: CircleAvatar(
+                                            radius: 12,
+                                            backgroundColor: greenText,
+                                            child: Text(
+                                              initial,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                  .toList(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                                        );
+                                      },
+                                    ).toList(),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 20),
+            ],
           ),
         );
       },
     );
 
-    final profileContent = const ProfileScreen();
-
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), // Menetapkan textScaleFactor ke 1.0
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF7FFF7),
-        appBar: AppBar(
-          backgroundColor: greenText,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
-            },
-          ),
-          title: const Text(
-            'PlanPaw',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-        ),
-        floatingActionButton: myIndex == 0
-            ? FloatingActionButton(
+    return Scaffold(
+      backgroundColor: const Color(0xFFF7FFF7),
+      floatingActionButton:
+          myIndex == 0
+              ? FloatingActionButton(
                 backgroundColor: pastelGreen,
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AddScreen()),
+                    MaterialPageRoute(builder: (_) => const AddScreen()),
                   );
                 },
                 child: const Icon(Icons.add, color: Colors.green),
               )
-            : null,
-        body: SafeArea(
-          child: IndexedStack(
-            index: myIndex,
-            children: [homeContent, profileContent],
-          ),
+              : null,
+      body: SafeArea(
+        child: IndexedStack(
+          index: myIndex,
+          children: [homeContent, const ProfileScreen()],
         ),
-        bottomNavigationBar: BottomNavigationBar(
+      ),
+      bottomNavigationBar: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+        child: BottomNavigationBar(
           currentIndex: myIndex,
-          onTap: (index) {
-            setState(() {
-              myIndex = index;
-            });
-          },
+          onTap: (index) => setState(() => myIndex = index),
           selectedItemColor: greenText,
           unselectedItemColor: Colors.grey,
           items: const [
