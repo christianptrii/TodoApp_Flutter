@@ -6,79 +6,110 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color pastelGreen = const Color(0xFFCDEAC0);
-    final Color greenText = const Color(0xFF3F6B3F);
-
     return Scaffold(
       backgroundColor: const Color(0xFFF7FFF7),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 60),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage('assets/profile.jpg'),
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(top: 40, left: 20, right: 20, bottom: 30),
+            decoration: const BoxDecoration(
+              color: Color(0xFF6D9773),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
             ),
-            const SizedBox(height: 16),
-            const Text(
-              "Christian Putri",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, size: 50, color: Color(0xFF6D9773)),
+                ),
+                const SizedBox(width: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      "Christian Putri",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      "christian@gmail.com",
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            const Text(
-              "christian@gmail.com",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+          const SizedBox(height: 40),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                children: [
+                  buildProfileOption(Icons.edit, "Edit Profile"),
+                  buildProfileOption(Icons.lock_outline, "Ganti Password"),
+                  buildProfileOption(Icons.color_lens_outlined, "Preferensi / Tema"),
+                  buildProfileOption(Icons.info_outline, "Tentang Aplikasi"),
+                  const Spacer(),
+                  Center(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF6D9773),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      ),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        );
+                      },
+                      icon: const Icon(Icons.logout, color: Colors.white),
+                      label: const Text("Logout", style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
-            const SizedBox(height: 32),
+          )
+        ],
+      ),
+    );
+  }
 
-            // Menu edit profil
-            ListTile(
-              leading: const Icon(Icons.edit, color: Colors.black54),
-              title: const Text("Edit Profile"),
-              onTap: () {},
+  static Widget buildProfileOption(IconData icon, String title) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xFFCDEAC0),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color(0xFF3F6B3F)),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
             ),
-            ListTile(
-              leading: const Icon(Icons.lock, color: Colors.black54),
-              title: const Text("Ganti Password"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.color_lens, color: Colors.black54),
-              title: const Text("Preferensi / Tema"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline, color: Colors.black54),
-              title: const Text("Tentang Aplikasi"),
-              onTap: () {},
-            ),
-            const Spacer(),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: greenText,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-              },
-              icon: const Icon(Icons.logout, color: Colors.white),
-              label: const Text(
-                "Logout",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        ),
+          ),
+          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black38),
+        ],
       ),
     );
   }
